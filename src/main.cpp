@@ -98,6 +98,7 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<
 				numBlock++;
 			}
 		}
+
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) //stops when the key is not pressed
 			velocity.x = -moveSpeed;
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
@@ -120,17 +121,17 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<
 			if (mainCharacterSprite.getPosition().y < platform[x].getPosition().y ||
 				mainCharacterSprite.getPosition().y < block[x].getPosition().y) // groundposition
 			{
-				velocity.y += GRAVITY; // if the shape is above the block, add the gravity to the y-value in velocity
+				velocity.y += GRAVITY; // if the character is above the block, add the gravity to the y-value in velocity
 			}
-			else if (overlap(mainCharacterSprite, platform[x]))
+			else if (overlap(mainCharacterSprite, platform[x])) //if overlap with platform setposition
 			{
 				mainCharacterSprite.setPosition(mainCharacterSprite.getPosition().x, platform[x].getPosition().y);
 			}
-			else if (overlap(mainCharacterSprite, block[x]))
+			else if (overlap(mainCharacterSprite, block[x])) //if overlap with one of the blocks setposition
 			{
 				mainCharacterSprite.setPosition(mainCharacterSprite.getPosition().x, block[x].getPosition().y);
 			}
-			if (velocity.y > 0 && overlap(mainCharacterSprite, block[x]))
+			if (velocity.y > 0 && overlap(mainCharacterSprite, block[x])) //when the velocity is greater than 0 and character overlap with one of the block, jump
 			{
 				velocity.y = -jumpSpeed;
 			}
