@@ -1,2 +1,2 @@
-# Jumping-Anthony
-Simple Game Winter 2016
+# samplegame
+Sample Game project for the C++ SFML group for Fall 2015
