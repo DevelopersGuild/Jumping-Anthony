@@ -15,7 +15,7 @@ int main()
 {
 	// initalizing window
 	sf::RenderWindow window(sf::VideoMode(WidthWindow, LengthWindow), "Jumping Anthony");
-
+	window.setFramerateLimit(60);
 	
 	// initalizing a texture object
 	sf::Texture mainCharacterTexture;
@@ -85,9 +85,13 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<
 
 	int numBlock = 0;
 	vector<sf::Sprite> block;
-
-	while (window.pollEvent(event))
+	while (window.isOpen())
 	{
+		while (window.pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+				window.close();
+		}
 		if (numBlock == 0)
 		{
 			while (numBlock < 4)
@@ -135,7 +139,7 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<
 			{
 				velocity.y = -jumpSpeed;
 			}
-			
+
 		}
 		window.clear();
 		window.draw(mainCharacterSprite);
