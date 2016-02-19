@@ -1,33 +1,36 @@
 #include <SFML/Graphics.hpp>
+#include <vector>
+#include <ctime>
+#include <cstdlib>
+
 #include "ResourcePath.h"
 #include "OpeningScreen.h"
 #include "Overlap.h"
 #include "main.h"
-#include <vector>
-#include <ctime>
-#include <cstdlib>
 using namespace std;
 
-void OpeningSceneMode(sf::RenderWindow&);
-void PlayMode(sf::RenderWindow&, sf::Sprite&, vector<sf::Sprite>, sf::Texture);
+void OpeningSceneMode(sf::RenderWindow&);											
+void PlayMode(sf::RenderWindow&, sf::Sprite&, vector<sf::Sprite>, sf::Texture);		//during game
+void MCMovement(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite);
+//void OpeningSceneMode(sf::RenderWindow&);
+//void PlayMode(sf::RenderWindow&, sf::Sprite&);
 
 int main()
 {
 	// initalizing window
 	sf::RenderWindow window(sf::VideoMode(WidthWindow, LengthWindow), "Jumping Anthony");
 	window.setFramerateLimit(60);
-	
-	// initalizing a texture object
+
+	//initializing main character sprite
 	sf::Texture mainCharacterTexture;
-	// applying an image to the texture object (it can be found in your assets folder)
 	mainCharacterTexture.loadFromFile(resourcePath() + "assets\\pikachu.png");
 
-	// applying texture object to sprite
 	sf::Sprite mainCharacterSprite;
 	mainCharacterSprite.setScale(0.1, 0.1);
 	mainCharacterSprite.setTexture(mainCharacterTexture);
 	mainCharacterSprite.setPosition(100, 600);
 	
+	//initializing block sprite
 	sf::Texture blockTexture;
 	blockTexture.loadFromFile(resourcePath() + "assets\\block.png");
 	vector<sf::Sprite> platform;
@@ -37,6 +40,8 @@ int main()
 		platform.push_back(sf::Sprite(blockTexture));
 		platform[i].setPosition(sf::Vector2f(i * 120, 700));
 	}
+	
+	//initialing game state to opening screen
 	gameState = OPENING;
 
 	while (window.isOpen())
@@ -48,9 +53,9 @@ int main()
 			break;
 		case PLAY:
 			PlayMode(window, mainCharacterSprite, platform, blockTexture);
+			MCMovement(window, mainCharacterSprite);
 			break;
 		}
-		
 	
 	}//end of while(window.isopen)
 
@@ -75,9 +80,11 @@ void OpeningSceneMode(sf::RenderWindow &window)
 }
 
 //PLAY MODE EVENT HANDLE
+
 void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<sf::Sprite> platform, sf::Texture blockTexture)
 {
 	sf::Event event;
+
 	const float GRAVITY = 1;
 	sf::Vector2f velocity(sf::Vector2f(0, 0));
 	float moveSpeed = 5.0f, jumpSpeed = 20.0f;
@@ -151,5 +158,27 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<
 
 		window.display();
 	}
+}
+
+void MCMovement(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite)
+{
+	sf::Event event;
+	while (window.pollEvent(event))
+	{
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		{
+			mainCharacterSprite.move(-5, 0);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		{
+			mainCharacterSprite.move(5, 0);
+		}
+		if (event.type == sf::Event::Closed)
+			window.close();
+	}			//end of while (window.pollEvent)
+
+		window.clear();
+		window.draw(mainCharacterSprite);
+		window.display();
 	
 }
