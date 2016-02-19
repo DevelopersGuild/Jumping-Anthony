@@ -10,8 +10,8 @@ int main()
 {
 	// initalizing window
 	sf::RenderWindow window(sf::VideoMode(WidthWindow, LengthWindow), "Jumping Anthony");
-
-	
+	//just a precautionary framerate limit
+	window.setFramerateLimit(60);
 	// initalizing a texture object
 	sf::Texture mainCharacterTexture;
 	// applying an image to the texture object (it can be found in your assets folder)
@@ -21,22 +21,22 @@ int main()
 	sf::Sprite mainCharacterSprite;
 	mainCharacterSprite.setScale(0.2, 0.2);
 	mainCharacterSprite.setTexture(mainCharacterTexture);
-	
+	//INITIALIZATION
 	gameState = OPENING;
+	int counter = 0;
 
+	//OPEN THE WINDOW
 	while (window.isOpen())
 	{
 		switch (gameState)
 		{
-		case OPENING:
-			OpeningSceneMode(window);
-			break;
 		case PLAY:
 			PlayMode(window, mainCharacterSprite);
 			break;
+		case OPENING:
+			OpeningSceneMode(window);
+			break;
 		}
-		
-	
 	}//end of while(window.isopen)
 
 	return 0;
@@ -63,19 +63,18 @@ void OpeningSceneMode(sf::RenderWindow &window)
 void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite)
 {
 	sf::Event event;
+	
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))	
+		mainCharacterSprite.move(-1, 0);
+	
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		mainCharacterSprite.move(1, 0);
+	
 	while (window.pollEvent(event))
 	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		{
-			mainCharacterSprite.move(-5, 0);
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		{
-			mainCharacterSprite.move(5, 0);
-		}
-		if (event.type == sf::Event::Closed)
-			window.close();
-	}			//end of while (window.pollEvent)
+	if (event.type == sf::Event::Closed)
+		window.close();
+	}//end of while (window.pollEvent)
 
 		window.clear();
 		window.draw(mainCharacterSprite);
