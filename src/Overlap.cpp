@@ -19,12 +19,12 @@ bool overlap(sf::Sprite& sprite1, sf::Sprite& sprite2)
 	float r2MaxY = std::max(rectangle2.top, rectangle2.top + rectangle2.height); // bottom
 
 	// Compute the intersection boundaries
-	float interLeft = std::max(r1MinX, r2MinX);
-	float interTop = std::max(r1MinY, r2MinY);
-	float interRight = std::min(r1MaxX, r2MaxX);
-	float interBottom = std::min(r1MaxY, r2MaxY);
+	float interLeft = std::max(r1MinX, r2MinX);//get the most right one
+	float interTop = std::max(r1MinY, r2MinY);//get the higher one
+	float interRight = std::min(r1MaxX, r2MaxX);// get the most left one
+	float interBottom = std::min(r1MaxY, r2MaxY);// the the lowest one
 
-	//want to check if bottom and top are overlaping
+	//want to check if bottom of the mainCharacterSprite and top of the Block sprite are overlaping
 
 	// If the intersection is valid (positive non zero area), then there is an intersection
 	return ((interLeft <= interRight) && (interTop <= interBottom));
