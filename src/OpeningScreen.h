@@ -13,12 +13,12 @@ void OpeningScreen(sf::RenderWindow &window)
 	sf::Text text2;
 	sf::Texture backgroundTexture;
 	sf::Sprite background;
-	if (!backgroundTexture.loadFromFile(resourcePath() + "assets\\background.png"))
+	if (!backgroundTexture.loadFromFile(resourcePath() + "assets/background.png"))
 	{
 		std::cout << "Error: File not found" << std::endl;
 	}
 
-	if (!font.loadFromFile(resourcePath() + "assets\\OpenSans-Regular.ttf"))
+	if (!font.loadFromFile(resourcePath() + "assets/OpenSans-Regular.ttf"))
 	{
 		std::cout << "Error: File not found" << std::endl;
 	}

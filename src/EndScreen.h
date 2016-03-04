@@ -14,12 +14,12 @@ void EndScreen(sf::RenderWindow &window)
 	sf::Text text3;
 	sf::Texture backgroundTexture;
 	sf::Sprite background;
-	if (!backgroundTexture.loadFromFile(resourcePath() + "assets\\background.png"))
+	if (!backgroundTexture.loadFromFile(resourcePath() + "assets/background.png"))
 	{
 		std::cout << "Error: File not found" << std::endl;
 	}
 
-	if (!font.loadFromFile(resourcePath() + "assets\\snap.ttf"))
+	if (!font.loadFromFile(resourcePath() + "assets/snap.ttf"))
 	{
 		std::cout << "Error: File not found" << std::endl;
 	}
