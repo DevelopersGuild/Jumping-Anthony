@@ -88,6 +88,9 @@
 		5FB6B9921BD18FC600ACC995 /* Overlap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Overlap.h; path = ../src/Overlap.h; sourceTree = SOURCE_ROOT; };
 		5FC0A39B1C38CB8200BFD80B /* Add new source code files here */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Add new source code files here"; sourceTree = "<group>"; };
 		5FF4FE981BB33EE60079FC4C /* Fantastic.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fantastic.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DAE368E21C8A414A00001BEA /* main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = main.h; path = ../src/main.h; sourceTree = "<group>"; };
+		DAE368E31C8A415100001BEA /* EndScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = EndScreen.h; path = ../src/EndScreen.h; sourceTree = "<group>"; };
+		DAE368E41C8A415100001BEA /* OpeningScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OpeningScreen.h; path = ../src/OpeningScreen.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +142,9 @@
 			isa = PBXGroup;
 			children = (
 				5FC0A39B1C38CB8200BFD80B /* Add new source code files here */,
+				DAE368E31C8A415100001BEA /* EndScreen.h */,
+				DAE368E41C8A415100001BEA /* OpeningScreen.h */,
+				DAE368E21C8A414A00001BEA /* main.h */,
 				5FF4FE9A1BB33EE60079FC4C /* SampleGame */,
 				5FF4FE991BB33EE60079FC4C /* Products */,
 			);

@@ -126,12 +126,21 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<
 		}
 
 		//move left and right
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) //stops when the key is not pressed
-			velocity.x = -moveSpeed;
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-			velocity.x = moveSpeed;
-		else
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) { //stops when the key is not pressed
+			float playerLeftSide = mainCharacterSprite.getPosition().x;
+			float distanceToWall = playerLeftSide;
+			velocity.x = -std::min(moveSpeed, distanceToWall);
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+			float playerWidth = mainCharacterSprite.getGlobalBounds().width;
+			float playerLeftSide = mainCharacterSprite.getPosition().x;
+			float playerRightSide = playerLeftSide + playerWidth;
+			float distanceToWall = WidthWindow - playerRightSide;
+			velocity.x = std::min(moveSpeed, distanceToWall);
+		}
+		else {
 			velocity.x = 0;
+		}
 
 		sf::Vector2f currPos = mainCharacterSprite.getPosition();
 
