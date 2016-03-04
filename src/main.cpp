@@ -27,7 +27,7 @@ int main()
 
 	// initalizing a texture object
 	sf::Texture mainCharacterTexture;
-	mainCharacterTexture.loadFromFile(resourcePath() + "assets\\pikachu.png");
+	mainCharacterTexture.loadFromFile(resourcePath() + "assets/pikachu.png");
 
 	//initializing main character sprite
 	sf::Sprite mainCharacterSprite;
@@ -39,7 +39,7 @@ int main()
 	sf::Font font;
 	sf::String points;
 	
-	if (!font.loadFromFile(resourcePath() + "assets\\snap.ttf"))
+	if (!font.loadFromFile(resourcePath() + "assets/snap.ttf"))
 	{
 		std::cout << "Error: File not found" << std::endl;
 	}
@@ -48,7 +48,7 @@ int main()
 	
 	//initializing block sprite
 	sf::Texture blockTexture;
-	blockTexture.loadFromFile(resourcePath() + "assets\\block.png");
+	blockTexture.loadFromFile(resourcePath() + "assets/block.png");
 
 	vector<sf::Sprite> platform;
 	vector<sf::Sprite> block;
