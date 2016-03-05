@@ -133,6 +133,18 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<
 
 		gravity(mainCharacterSprite, platform, blocks, points, velocity);
 		mainCharacterSprite.move(velocity.x, velocity.y);
+		if (mainCharacterSprite.getPosition().x > WidthWindow - mainCharacterSprite.getGlobalBounds().width)
+		{
+			//when the right side of the character is beyond the right side of the game window, move the character back to be at the right side of the window and stop further right movement
+			mainCharacterSprite.setPosition(WidthWindow - mainCharacterSprite.getGlobalBounds().width, mainCharacterSprite.getPosition().y);
+			velocity.x = 0;
+		}
+		else if (mainCharacterSprite.getPosition().x < 0)
+		{
+			//when the left side of the character is beyond the left side of the game window, move the character back to be at the left side of the window and stop further left movement
+			mainCharacterSprite.setPosition(0, mainCharacterSprite.getPosition().y);
+			velocity.x = 0;
+		}
 
 		stringstream convertToString;
 		convertToString << points;
