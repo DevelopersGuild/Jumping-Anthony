@@ -12,6 +12,7 @@ void EndScreen(sf::RenderWindow &window)
 	sf::Text text1;
 	sf::Text text2;
 	sf::Text text3;
+
 	sf::Texture backgroundTexture;
 	sf::Sprite background;
 	if (!backgroundTexture.loadFromFile(resourcePath() + "assets/background.png"))
@@ -47,8 +48,13 @@ void EndScreen(sf::RenderWindow &window)
 	text3.setCharacterSize(24);
 	text3.setColor(sf::Color::Black);
 	text3.setPosition(100, 500);
+<<<<<<< HEAD
 	window.clear();
+=======
+	
+>>>>>>> piplups-master
 	//Draws background first and then the texts
+	window.clear();
 	window.draw(background);
 	window.draw(text1);
 	window.draw(text2);
