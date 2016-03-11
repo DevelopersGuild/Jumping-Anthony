@@ -9,6 +9,7 @@
 #include "EndScreen.h"
 #include "Overlap.h"
 #include "main.h"
+#include "MovingBackground.h"
 using namespace std;
 
 struct Block
@@ -18,7 +19,7 @@ struct Block
 };
 
 void OpeningSceneMode(sf::RenderWindow&);
-void PlayMode(sf::RenderWindow&, sf::Sprite&, vector<Block>& platform, vector<Block>& blocks, sf::Text); // during game
+void PlayMode(sf::RenderWindow&, sf::Sprite&, vector<Block>& platform, vector<Block>& blocks, sf::Text, MovingBackground&); // during game
 void moveBlocks(vector<Block> &platform, vector<Block> &block);
 void createBlock(sf::Texture*, vector<Block>&, vector<Block>&);
 void changeBlockPosition(vector<Block>&, int);
@@ -31,6 +32,7 @@ int main()
 	// initalizing window
 	sf::RenderWindow window(sf::VideoMode(WidthWindow, LengthWindow), "Jumping Anthony");
 
+	MovingBackground movingBackground;
 	window.setFramerateLimit(30);
 
 	// initalizing a texture object
@@ -52,7 +54,7 @@ int main()
 		std::cout << "Error: File not found" << std::endl;
 	}
 	sf::Text score(points, font, 30);
-	score.setPosition(350, 700);
+	score.setPosition(350, 20);
 	
 	//initializing block sprite
 	sf::Texture blockTexture;
@@ -64,7 +66,9 @@ int main()
 	
 	//initialing game state to opening screen
 	gameState = OPENING;
+	int counter = 0;
 
+	//OPEN THE WINDOW
 	while (window.isOpen())
 	{
 		switch (gameState)
@@ -73,8 +77,7 @@ int main()
 			OpeningSceneMode(window);
 			break;
 		case PLAY:
-			PlayMode(window, mainCharacterSprite, platform, blocks, score);
-			break;
+			PlayMode(window, mainCharacterSprite, platform, blocks, score, movingBackground);			break;
 		case GAME_OVER:
 			EndScreenMode(window);
 			break;
@@ -103,7 +106,8 @@ void OpeningSceneMode(sf::RenderWindow &window)
 }
 
 //PLAY MODE EVENT HANDLE
-void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<Block> &platform, vector<Block>& blocks, sf::Text score)
+void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<Block> &platform, vector<Block>& blocks,
+	sf::Text score, MovingBackground &movingBackground)
 {
 	sf::Event event;
 	sf::Vector2f velocity(sf::Vector2f(0, 0));
@@ -113,6 +117,7 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<
 
 	while (window.isOpen() && gameState == PLAY)
 	{
+		movingBackground.moving();
 		while (window.pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
@@ -133,15 +138,29 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<
 
 		gravity(mainCharacterSprite, platform, blocks, points, velocity);
 		mainCharacterSprite.move(velocity.x, velocity.y);
-
+		if (mainCharacterSprite.getPosition().x > WidthWindow - mainCharacterSprite.getGlobalBounds().width)
+		{
+			//when the right side of the character is beyond the right side of the game window, move the character back to be at the right side of the window and stop further right movement
+			mainCharacterSprite.setPosition(WidthWindow - mainCharacterSprite.getGlobalBounds().width, mainCharacterSprite.getPosition().y);
+			velocity.x = 0;
+		}
+		else if (mainCharacterSprite.getPosition().x < 0)
+		{
+			//when the left side of the character is beyond the left side of the game window, move the character back to be at the left side of the window and stop further left movement
+			mainCharacterSprite.setPosition(0, mainCharacterSprite.getPosition().y);
+			velocity.x = 0;
+		}
 		stringstream convertToString;
 		convertToString << points;
 		score.setString(convertToString.str());
 		
 		window.clear();
-		window.draw(score);
+		window.draw(movingBackground.getBackground(0));
+		window.draw(movingBackground.getBackground(1));
+		window.draw(movingBackground.getBackground(2));
 		window.draw(mainCharacterSprite);
 		drawBlocks(window, platform, blocks);
+		window.draw(score);
 		if (mainCharacterSprite.getPosition().y > LengthWindow)
 		{
 			gameState = GAME_OVER;
@@ -273,12 +292,25 @@ void EndScreenMode(sf::RenderWindow &window)
 	window.clear();
 	EndScreen(window);
 	sf::Event event;
+
+	//WORKING ON THE PLAY AGAIN BUT PROBABLY THIS IS WRONG APPROACH..
+	sf::RectangleShape menu1;
+	menu1.setSize(sf::Vector2f(100, 30));
+	menu1.setPosition(sf::Vector2f(100, 725));
 	while (window.pollEvent(event))
 	{
 		if (event.type == sf::Event::MouseButtonPressed)
 		{
-			window.clear();
-			window.close();
+			sf::Mouse mouse;
+			//IF THE MOUSE IS IN THE POSIITON OF THE RECTANGLE
+			if (mouse.getPosition().x >= menu1.getPosition().x
+				&& mouse.getPosition().x <= menu1.getPosition().x + 100
+				&& mouse.getPosition().y >= menu1.getPosition().y
+				&& mouse.getPosition().y <= menu1.getPosition().y + 30)
+			{
+				gameState = PLAY;
+			}
+			
 		}
 		else if (event.type == sf::Event::Closed)
 			window.close();

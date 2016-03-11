@@ -11,7 +11,8 @@ void EndScreen(sf::RenderWindow &window)
 	sf::Font font;
 	sf::Text text1;
 	sf::Text text2;
-	sf::Text text3;
+	//sf::Text text3;
+	sf::Text menu1;
 	sf::Texture backgroundTexture;
 	sf::Sprite background;
 	if (!backgroundTexture.loadFromFile(resourcePath() + "assets/background.png"))
@@ -42,17 +43,24 @@ void EndScreen(sf::RenderWindow &window)
 	text2.setColor(sf::Color::Black);
 	text2.setPosition(100, 450);	//WILL DEFINITELY HAVE TO ADJUST POSITIONING
 
-	text3.setFont(font);
-	text3.setString("Click to Close");
-	text3.setCharacterSize(24);
-	text3.setColor(sf::Color::Black);
-	text3.setPosition(100, 700);
+	//text3.setFont(font);
+	//text3.setString("Click to Close");
+	//text3.setCharacterSize(24);
+	//text3.setColor(sf::Color::Black);
+	//text3.setPosition(100, 700);
+
+	menu1.setFont(font);
+	menu1.setString("Play Again!");
+	menu1.setCharacterSize(30);
+	menu1.setColor(sf::Color::Black);
+	menu1.setPosition(100, 725);
+
 	window.clear();
 	//Draws background first and then the texts
 	window.draw(background);
 	window.draw(text1);
 	window.draw(text2);
-	window.draw(text3);
+	window.draw(menu1);
 	window.display();
 
 }
