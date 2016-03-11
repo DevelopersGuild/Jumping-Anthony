@@ -86,6 +86,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\EndScreen.h" />
     <ClInclude Include="..\..\src\main.h" />
+    <ClInclude Include="..\..\src\MovingBackground.h" />
     <ClInclude Include="..\..\src\OpeningScreen.h" />
     <ClInclude Include="..\..\src\Overlap.h" />
     <ClInclude Include="..\..\src\ResourcePath.h" />
