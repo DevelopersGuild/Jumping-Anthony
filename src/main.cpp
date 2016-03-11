@@ -119,9 +119,13 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<
 	int points = 0;
 	srand(time(NULL));
 
+	//reset main character position to replay game
+	mainCharacterSprite.setPosition(200.f, 200.f);
+
 	while (window.isOpen() && gameState == PLAY)
 	{
 		movingBackground.moving();
+	
 		moveBlocks(platform, blocks);
 
 		if (numBlock == SIZE)
@@ -134,15 +138,16 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<
 		}
 
 		gravity(mainCharacterSprite, platform, blocks, points, velocity);
+		
+		//main character movement and limit character from moving out of screen
 		mainCharacterSprite.move(velocity.x, velocity.y);
-		if (mainCharacterSprite.getPosition().x > WidthWindow - mainCharacterSprite.getGlobalBounds().width)
-		{
+		
+		if (mainCharacterSprite.getPosition().x > WidthWindow - mainCharacterSprite.getGlobalBounds().width){
 			//when the right side of the character is beyond the right side of the game window, move the character back to be at the right side of the window and stop further right movement
 			mainCharacterSprite.setPosition(WidthWindow - mainCharacterSprite.getGlobalBounds().width, mainCharacterSprite.getPosition().y);
 			velocity.x = 0;
 		}
-		else if (mainCharacterSprite.getPosition().x < 0)
-		{
+		else if (mainCharacterSprite.getPosition().x < 0){
 			//when the left side of the character is beyond the left side of the game window, move the character back to be at the left side of the window and stop further left movement
 			mainCharacterSprite.setPosition(0, mainCharacterSprite.getPosition().y);
 			velocity.x = 0;
@@ -153,8 +158,11 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<
 		score.setString(convertToString.str());
 		
 
-		while (window.pollEvent(event))
-		{
+		if (mainCharacterSprite.getPosition().y > LengthWindow)
+			gameState = GAME_OVER;
+		
+
+		while (window.pollEvent(event)){		
 			if (event.type == sf::Event::Closed)
 				window.close();
 		}
@@ -162,15 +170,16 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<
 		//display everything on screen
 		window.clear();
 		window.draw(score);
+		window.draw(movingBackground.getBackground(0));
+		window.draw(movingBackground.getBackground(1));
+		window.draw(movingBackground.getBackground(2));
 		window.draw(mainCharacterSprite);
 		drawBlocks(window, platform, blocks);
-		if (mainCharacterSprite.getPosition().y > LengthWindow)
-		{
-			gameState = GAME_OVER;
-		}
+		
 		window.display();
 	}
 }
+
 void moveBlocks(vector<Block> &platform, vector<Block> &block)
 {
 	//move the block down at the same speed (we are not using view)
@@ -207,6 +216,10 @@ void createBlock(sf::Texture *blockTexture, vector<Block>&blocks, vector<Block>&
 
 }
 
+/***********************************************************
+				changeBlockPosition
+
+*/
 void changeBlockPosition(vector<Block> &block, int numBlock)
 {
 	if (numBlock == 0)
@@ -222,10 +235,13 @@ void changeBlockPosition(vector<Block> &block, int numBlock)
 	block[numBlock].pointsReceived = false;
 }
 
-void gravity(sf::Sprite &mainCharacterSprite, vector<Block> platform, vector<Block> &blocks, int &points, sf::Vector2f &velocity)
+
+
+void gravity(sf::Sprite &mainCharacterSprite, vector<Block> platform, vector<Block> &blocks, 
+	int &points, sf::Vector2f &velocity)
 {
 	const float GRAVITY = 1;
-	float moveSpeed = 50.0f, jumpSpeed = 45.0f;
+	float moveSpeed = 30.0f, jumpSpeed = 35.0f;
 
 	sf::Vector2f currPos = mainCharacterSprite.getPosition();
 
@@ -261,23 +277,10 @@ void gravity(sf::Sprite &mainCharacterSprite, vector<Block> platform, vector<Blo
 		{
 			velocity.y += GRAVITY; // if the character is above the block, add the gravity to the y-value in velocity
 		}
-<<<<<<< HEAD
 		else if (velocity.y > 0 && overlap(mainCharacterSprite, blocks[elem].sprite)) //if overlap with one of the blocks setposition velocity.y>0 means the mainCharacterSprite is falling
 		{
 			//mainCharacterSprite.setPosition(mainCharacterSprite.getPosition().x, block[elem].getPosition().y);
 			mainCharacterSprite.setPosition(currPos);
-=======
-		window.clear();
-		window.draw(movingBackground.getBackground(0));
-		window.draw(movingBackground.getBackground(1));
-		window.draw(movingBackground.getBackground(2));
-		window.draw(mainCharacterSprite);
-		for (int k = 0; k < 4; k++)
-		{
-			
-			window.draw(platform[k]);
-			window.draw(block[k]);
->>>>>>> 86fb8aa576a10104f49881e1ceeafea82c64aa23
 		}
 		if (velocity.y > 0 && overlap(mainCharacterSprite, blocks[elem].sprite)) //when the velocity is greater than 0 and character overlap with one of the block, jump
 		{
@@ -291,6 +294,7 @@ void gravity(sf::Sprite &mainCharacterSprite, vector<Block> platform, vector<Blo
 		}
 	}
 }
+
 void drawBlocks(sf::RenderWindow &window, vector<Block> platform, vector<Block> block)
 {
 	for (int x = 0; x < 4; x++)
@@ -309,16 +313,11 @@ void EndScreenMode(sf::RenderWindow &window)
 	EndScreen(window);
 	sf::Event event;
 	
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))	
-		mainCharacterSprite.move(-1, 0);
-	
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		mainCharacterSprite.move(1, 0);
-	
 	while (window.pollEvent(event))
 	{
-<<<<<<< HEAD
-		if (event.type == sf::Event::MouseButtonPressed)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+			gameState = PLAY;
+		else if (event.type == sf::Event::MouseButtonPressed)
 		{
 			window.clear();
 			window.close();
@@ -326,14 +325,4 @@ void EndScreenMode(sf::RenderWindow &window)
 		else if (event.type == sf::Event::Closed)
 			window.close();
 	}
-=======
-	if (event.type == sf::Event::Closed)
-		window.close();
-	}//end of while (window.pollEvent)
-
-		window.clear();
-		window.draw(mainCharacterSprite);
-		window.display();
-	
->>>>>>> 86fb8aa576a10104f49881e1ceeafea82c64aa23
 }
