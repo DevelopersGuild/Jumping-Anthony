@@ -19,7 +19,7 @@ struct Block
 };
 
 void OpeningSceneMode(sf::RenderWindow&);
-void PlayMode(sf::RenderWindow&, sf::Sprite&, vector<Block>& platform, vector<Block>& blocks, sf::Text, MovingBackground&); // during game
+void PlayMode(sf::RenderWindow&, sf::Sprite&, sf::Texture, vector<Block>& platform, vector<Block>& blocks, sf::Text, MovingBackground&); // during game
 void moveBlocks(vector<Block> &platform, vector<Block> &block);
 void createBlock(sf::Texture*, vector<Block>&, vector<Block>&);
 void changeBlockPosition(vector<Block>&, int);
@@ -43,7 +43,6 @@ int main()
 	sf::Sprite mainCharacterSprite;
 	mainCharacterSprite.setScale(0.05, 0.05);
 	mainCharacterSprite.setTexture(mainCharacterTexture);
-	mainCharacterSprite.setPosition(100, 600);
 
 	// score
 	sf::Font font;
@@ -62,7 +61,7 @@ int main()
 
 	vector<Block> platform;
 	vector<Block> blocks;
-	createBlock(&blockTexture, blocks, platform);
+
 	
 	//initialing game state to opening screen
 	gameState = OPENING;
@@ -77,7 +76,7 @@ int main()
 			OpeningSceneMode(window);
 			break;
 		case PLAY:
-			PlayMode(window, mainCharacterSprite, platform, blocks, score, movingBackground);			break;
+			PlayMode(window, mainCharacterSprite, blockTexture, platform, blocks, score, movingBackground);			break;
 		case GAME_OVER:
 			EndScreenMode(window);
 			break;
@@ -106,7 +105,7 @@ void OpeningSceneMode(sf::RenderWindow &window)
 }
 
 //PLAY MODE EVENT HANDLE
-void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<Block> &platform, vector<Block>& blocks,
+void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, sf::Texture blockTexture, vector<Block> &platform, vector<Block>& blocks,
 	sf::Text score, MovingBackground &movingBackground)
 {
 	sf::Event event;
@@ -114,7 +113,8 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<
 	int numBlock = 0;
 	int points = 0;
 	srand(time(NULL));
-
+	mainCharacterSprite.setPosition(100, 600);
+	createBlock(&blockTexture, blocks, platform);
 	while (window.isOpen() && gameState == PLAY)
 	{
 		movingBackground.moving();
@@ -293,24 +293,14 @@ void EndScreenMode(sf::RenderWindow &window)
 	EndScreen(window);
 	sf::Event event;
 
-	//WORKING ON THE PLAY AGAIN BUT PROBABLY THIS IS WRONG APPROACH..
-	sf::RectangleShape menu1;
-	menu1.setSize(sf::Vector2f(100, 30));
-	menu1.setPosition(sf::Vector2f(100, 725));
 	while (window.pollEvent(event))
 	{
-		if (event.type == sf::Event::MouseButtonPressed)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+			gameState = PLAY;
+		else if (event.type == sf::Event::MouseButtonPressed)
 		{
-			sf::Mouse mouse;
-			//IF THE MOUSE IS IN THE POSIITON OF THE RECTANGLE
-			if (mouse.getPosition().x >= menu1.getPosition().x
-				&& mouse.getPosition().x <= menu1.getPosition().x + 100
-				&& mouse.getPosition().y >= menu1.getPosition().y
-				&& mouse.getPosition().y <= menu1.getPosition().y + 30)
-			{
-				gameState = PLAY;
-			}
-			
+			window.clear();
+			window.close();
 		}
 		else if (event.type == sf::Event::Closed)
 			window.close();

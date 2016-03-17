@@ -11,8 +11,8 @@ void EndScreen(sf::RenderWindow &window)
 	sf::Font font;
 	sf::Text text1;
 	sf::Text text2;
-	//sf::Text text3;
-	sf::Text menu1;
+	sf::Text text3;
+
 	sf::Texture backgroundTexture;
 	sf::Sprite background;
 	if (!backgroundTexture.loadFromFile(resourcePath() + "assets/background.png"))
@@ -49,18 +49,19 @@ void EndScreen(sf::RenderWindow &window)
 	//text3.setColor(sf::Color::Black);
 	//text3.setPosition(100, 700);
 
-	menu1.setFont(font);
-	menu1.setString("Play Again!");
-	menu1.setCharacterSize(30);
-	menu1.setColor(sf::Color::Black);
-	menu1.setPosition(100, 725);
+	text3.setFont(font);
+	text3.setString("Press R to replay\n\nClick to Close");
+	text3.setCharacterSize(24);
+	text3.setColor(sf::Color::Black);
+	text3.setPosition(100, 500);
 
 	window.clear();
 	//Draws background first and then the texts
 	window.draw(background);
 	window.draw(text1);
 	window.draw(text2);
-	window.draw(menu1);
+	window.draw(text3);
+	
 	window.display();
 
 }

@@ -41,7 +41,6 @@ void OpeningScreen(sf::RenderWindow &window)
 	text2.setColor(sf::Color::Black);
 	text2.setPosition(150, 450);	//WILL DEFINITELY HAVE TO ADJUST POSITIONING
 
-	
 	window.clear();
 	//Draws background first and then the texts
 	window.draw(background);
