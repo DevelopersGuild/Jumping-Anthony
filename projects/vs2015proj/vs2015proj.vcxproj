@@ -156,8 +156,15 @@
     <ClCompile Include="..\..\src\ResourcePathWindows.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\EndScreen.h" />
+    <ClInclude Include="..\..\src\main.h" />
+    <ClInclude Include="..\..\src\MovingBackground.h" />
+    <ClInclude Include="..\..\src\OpeningScreen.h" />
     <ClInclude Include="..\..\src\Overlap.h" />
     <ClInclude Include="..\..\src\ResourcePath.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\ResourcePathMac.mm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
