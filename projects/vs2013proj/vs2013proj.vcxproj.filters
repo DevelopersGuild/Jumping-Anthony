@@ -45,5 +45,8 @@
 >>>>>>> 86fb8aa576a10104f49881e1ceeafea82c64aa23
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\MovingBackground.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

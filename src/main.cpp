@@ -19,7 +19,7 @@ struct Block
 };
 
 void OpeningSceneMode(sf::RenderWindow&);
-void PlayMode(sf::RenderWindow&, sf::Sprite&, vector<Block>& platform, vector<Block>& blocks, sf::Text, MovingBackground&); // during game
+void PlayMode(sf::RenderWindow&, sf::Sprite&, sf::Texture, vector<Block>& platform, vector<Block>& blocks, sf::Text, MovingBackground&); // during game
 void moveBlocks(vector<Block> &platform, vector<Block> &block);
 void createBlock(sf::Texture*, vector<Block>&, vector<Block>&);
 void changeBlockPosition(vector<Block>&, int);
@@ -32,7 +32,8 @@ int main()
 {
 	// initalizing window
 	sf::RenderWindow window(sf::VideoMode(WidthWindow, LengthWindow), "Jumping Anthony");
-	window.setFramerateLimit(60);
+
+	window.setFramerateLimit(30);
 	
 	//initializing main character sprite
 	sf::Texture mainCharacterTexture;
@@ -42,7 +43,6 @@ int main()
 	sf::Sprite mainCharacterSprite;
 	mainCharacterSprite.setScale(0.05, 0.05);
 	mainCharacterSprite.setTexture(mainCharacterTexture);
-	mainCharacterSprite.setPosition(100, 600);
 
 	//initialize background
 	MovingBackground movingBackground;
@@ -55,7 +55,7 @@ int main()
 		std::cout << "Error: File not found" << std::endl;
 	}
 	sf::Text score(points, font, 30);
-	score.setPosition(350, 700);
+	score.setPosition(350, 20);
 	
 	//initializing block sprite
 	sf::Texture blockTexture;
@@ -64,7 +64,7 @@ int main()
 
 	vector<Block> platform;
 	vector<Block> blocks;
-	createBlock(&blockTexture, blocks, platform);
+
 	
 	//initialing game state to opening screen
 	gameState = OPENING;
@@ -79,7 +79,7 @@ int main()
 			OpeningSceneMode(window);
 			break;
 		case PLAY:
-			PlayMode(window, mainCharacterSprite, platform, blocks, score, movingBackground);
+			PlayMode(window, mainCharacterSprite, blockTexture, platform, blocks, score, movingBackground);			
 			break;
 		case GAME_OVER:
 			EndScreenMode(window, gameState);
@@ -113,49 +113,59 @@ void OpeningSceneMode(sf::RenderWindow &window)
 }
 
 //PLAY MODE EVENT HANDLE
-void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<Block> &platform, 
-		vector<Block>& blocks, sf::Text score, MovingBackground &movingBackground)
+void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, sf::Texture blockTexture, vector<Block> &platform, vector<Block>& blocks,
+	sf::Text score, MovingBackground &movingBackground)
 {
 	sf::Event event;
 	
-
 	sf::Vector2f velocity(sf::Vector2f(0, 0));
 	int numBlock = 0;
 	int points = 0;
 	srand(time(NULL));
 
-	//reset main character position to replay game
-	mainCharacterSprite.setPosition(200.f, 200.f);
+	//reset main character and block position to replay game
+	mainCharacterSprite.setPosition(100.f, 600.f);
+	createBlock(&blockTexture, blocks, platform);
 
 	while (window.isOpen() && gameState == PLAY)
 	{
 		movingBackground.moving();
-	
-		
-
-		//when block goes out of the screen vertically, move it back to the top
-		for (int i = 0; i < NUMBLOCKS; i++) {
-			if (blocks[i].sprite.getPosition().y > LengthWindow) {
-				blocks[i].sprite.setPosition(rand() % 400, rand() % 400);
-				blocks[i].sprite.setScale(sf::Vector2f(1, 0.5));
-				blocks[i].pointsReceived = false;
-
-			}
-		}
-		
 		moveBlocks(platform, blocks);
+		//when block goes out of the screen vertically, move it back to the top
+		if (numBlock == NUMBLOCKS)
+		{
+			numBlock = 0;
+		}
+		if (blocks[numBlock].sprite.getPosition().y > LengthWindow)
+		{//when the block disappears from the window place that block on the top for less memory
+			changeBlockPosition(blocks, numBlock);
+			++numBlock;
+		}
+		//what is this?? creating block again?? this messes up the blocks.
+		//for (int i = 0; i < NUMBLOCKS; i++) {
+		//	if (blocks[i].sprite.getPosition().y > LengthWindow) {
+		//		blocks[i].sprite.setPosition(rand() % 400, rand() % 400);
+		//		blocks[i].sprite.setScale(sf::Vector2f(1, 0.5));
+		//		blocks[i].pointsReceived = false;
+
+		//	}
+		//}
+		
+		
 		gravity(mainCharacterSprite, platform, blocks, points, velocity);
 		
 		//main character movement and limit character from moving out of screen
 		mainCharacterSprite.move(velocity.x, velocity.y);
-		
+
 		if (mainCharacterSprite.getPosition().x > WidthWindow - mainCharacterSprite.getGlobalBounds().width){
-			//when the right side of the character is beyond the right side of the game window, move the character back to be at the right side of the window and stop further right movement
+			//when the right side of the character is beyond the right side of the game window, move the character 
+			//back to be at the right side of the window and stop further right movement
 			mainCharacterSprite.setPosition(WidthWindow - mainCharacterSprite.getGlobalBounds().width, mainCharacterSprite.getPosition().y);
 			velocity.x = 0;
 		}
 		else if (mainCharacterSprite.getPosition().x < 0){
-			//when the left side of the character is beyond the left side of the game window, move the character back to be at the left side of the window and stop further left movement
+			//when the left side of the character is beyond the left side of the game window, move the character 
+			//back to be at the left side of the window and stop further left movement
 			mainCharacterSprite.setPosition(0, mainCharacterSprite.getPosition().y);
 			velocity.x = 0;
 		}
@@ -176,13 +186,14 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite, vector<
 
 		//display everything on screen
 		window.clear();
-		window.draw(score);
+
 		window.draw(movingBackground.getBackground(0));
 		window.draw(movingBackground.getBackground(1));
 		window.draw(movingBackground.getBackground(2));
 		window.draw(mainCharacterSprite);
 		drawBlocks(window, platform, blocks);
-		
+		window.draw(score);
+
 		window.display();
 	}
 }
@@ -235,16 +246,14 @@ if any blocks inside the vector block run out of screen, move it back to the top
 */
 void changeBlockPosition(vector<Block> &block, int numBlock)
 {
-
-	for (int i = 0; i < block.size(); i++) {
-		if (block[i].sprite.getPosition().y > LengthWindow) {
-			block[numBlock].sprite.setPosition(sf::Vector2f((rand() % 280 + 1), block[numBlock - 1].sprite.getPosition().y - 120));
-			block[i].sprite.setScale(sf::Vector2f(1, 0.5));
-			block[i].pointsReceived = false;
-		}
-	}
-}
-/*
+	//this does not use numBlockand when numblock= 0 and 0-1 is -1... this does not work
+	//for (int i = 0; i < block.size(); i++) {
+	//	if (block[i].sprite.getPosition().y > LengthWindow) {
+	//		block[numBlock].sprite.setPosition(sf::Vector2f((rand() % 280 + 1), block[numBlock - 1].sprite.getPosition().y - 120));
+	//		block[i].sprite.setScale(sf::Vector2f(1, 0.5));
+	//		block[i].pointsReceived = false;
+	//	}
+	//}
 	if (numBlock == 0)
 	{
 		block[numBlock].sprite.setPosition(sf::Vector2f((rand() % 280 + 1), block[block.size() - 1].sprite.getPosition().y - 120));
@@ -252,12 +261,11 @@ void changeBlockPosition(vector<Block> &block, int numBlock)
 	else
 	{
 		//place that block above the lastest block created.
-		block[numBlock].sprite.setPosition(sf::Vector2f((rand() % 280 + 1), block[numBlock - 1].sprite.getPosition().y - 120)); 
+		block[numBlock].sprite.setPosition(sf::Vector2f((rand() % 280 + 1), block[numBlock - 1].sprite.getPosition().y - 120));
 	}
 	block[numBlock].sprite.setScale(sf::Vector2f(1, 0.5));
 	block[numBlock].pointsReceived = false;
-	*/
-
+}
 
 
 void gravity(sf::Sprite &mainCharacterSprite, vector<Block> platform, vector<Block> &blocks, 
@@ -337,7 +345,6 @@ void EndScreenMode(sf::RenderWindow &window, typeName& gameState)
 	EndScreen(window);
 	sf::Event event;
 
-	
 	while (window.pollEvent(event))
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
