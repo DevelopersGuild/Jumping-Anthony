@@ -12,6 +12,7 @@ void EndScreen(sf::RenderWindow &window)
 	sf::Text text1;
 	sf::Text text2;
 	sf::Text text3;
+	sf::Text credit; 
 
 	sf::Texture backgroundTexture;
 	sf::Sprite background;
@@ -44,21 +45,25 @@ void EndScreen(sf::RenderWindow &window)
 	text2.setPosition(100, 450);	//WILL DEFINITELY HAVE TO ADJUST POSITIONING
 
 	text3.setFont(font);
-	text3.setString("Press R to replay\n\nClick to Close");
+	text3.setString("Press R to replay\n\nPress C for credits");
 	text3.setCharacterSize(24);
 	text3.setColor(sf::Color::Black);
 	text3.setPosition(100, 500);
-<<<<<<< HEAD
-	window.clear();
-=======
-	
->>>>>>> piplups-master
+
+	credit.setFont(font);
+	credit.setString("Click to Close");
+		
+	credit.setCharacterSize(24);
+	credit.setColor(sf::Color::Black);
+	credit.setPosition(100, 600);
+
 	//Draws background first and then the texts
 	window.clear();
 	window.draw(background);
 	window.draw(text1);
 	window.draw(text2);
 	window.draw(text3);
+	window.draw(credit);
 	window.display();
 
 }

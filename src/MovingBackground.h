@@ -7,7 +7,7 @@
 class MovingBackground
 {
 private:
-	sf::Texture beginningBackgroundTexture;
+	sf::Texture beginningBackgroundTexture;			
 	sf::Texture movingBackgroundTexture;
 	 
 	sf::Sprite beginningBackground;
