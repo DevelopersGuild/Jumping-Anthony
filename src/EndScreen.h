@@ -45,7 +45,7 @@ void EndScreen(sf::RenderWindow &window)
 	text2.setPosition(100, 450);	//WILL DEFINITELY HAVE TO ADJUST POSITIONING
 
 	text3.setFont(font);
-	text3.setString("Press R to replay\n\nPress C for closes");
+	text3.setString("Press R to replay\n\nPress C for credits");
 	text3.setCharacterSize(24);
 	text3.setColor(sf::Color::Black);
 	text3.setPosition(100, 500);

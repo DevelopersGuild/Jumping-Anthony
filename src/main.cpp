@@ -30,7 +30,6 @@ void checkMainCharacterBound(sf::Sprite &mainCharacterSprite, sf::Vector2f &velo
 void moveBlocks(vector<Block> &block);
 void changeBlockPosition(vector<Block>&);
 void gravity(sf::Sprite &mainCharacterSprite, vector<Block> &blocks, int &points, sf::Vector2f &velocity);
-void drawBlocks(sf::RenderWindow &, const vector<Block>& block);
 void EndScreenMode(sf::RenderWindow &, typeName& );
 void drawCredit(sf::RenderWindow &, typeName& gameState);
 
@@ -53,17 +52,6 @@ int main()
 	//initialize background
 	MovingBackground movingBackground;
 
-	// score
-	sf::Font font;
-	sf::String points;
-	
-	if (!font.loadFromFile(resourcePath() + "assets/snap.ttf"))
-	{
-		std::cout << "Error: File not found" << std::endl;
-	}
-	sf::Text score(points, font, 30);
-	score.setPosition(350, 700);
-	
 	//initializing a vector of blocks
 	sf::Texture blockTexture;
 	if (!blockTexture.loadFromFile(resourcePath() + "assets/block.png"))
@@ -83,11 +71,20 @@ int main()
 		blocks.push_back(block);	//add 1 block to the vector
 		blocks[i].sprite.setPosition(rand() % 400, i * (LengthWindow / NUMBLOCKS));		//every blocks is 100 pixel higher than the other		
 	}
-	
-			
+	//define score (print to screen) and points (int)
+	sf::Font Scorefont;
+	if (!Scorefont.loadFromFile(resourcePath() + "assets/snap.ttf"))
+		std::cout << "Error: File not found" << std::endl;
+
+	sf::Text score;
+	score.setFont(Scorefont);
+	score.setCharacterSize(30);
+	score.setColor(sf::Color::Black);
+	score.setPosition(350, 50);
+	stringstream displayPointsOnScreen;
 	//initialing game state to opening screen
 	gameState = OPENING;
-	int counter = 0;
+	
 
 	//OPEN THE WINDOW
 	while (window.isOpen())
@@ -105,8 +102,7 @@ int main()
 			break;
 		case CREDIT:
 			drawCredit(window, gameState);
-			break;
-		
+			break;		
 		}
 
 	}//end of while(window.isopen)
@@ -139,11 +135,9 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite,
 		vector<Block>& blocks, sf::Text score, MovingBackground &movingBackground)
 {
 	sf::Event event;
-	
+	srand(time(NULL));
 	sf::Vector2f velocity(sf::Vector2f(0, 0));
 	int points = 0;
-	srand(time(NULL));
-
 	//reset main character position to replay game
 	mainCharacterSprite.setPosition(200.f, 200.f);
 
@@ -151,21 +145,15 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite,
 	while (window.isOpen() && gameState == PLAY)
 	{
 		movingBackground.moving();
-		//create blocks randomly, one on top of another
-		//when block goes out of the screen vertically, move it back to the top
-	
+
 		moveBlocks(blocks);
 		changeBlockPosition(blocks);
 		
-		
-		gravity(mainCharacterSprite, blocks, points, velocity);
-		
 		//main character movement and limit character from moving out of screen
+		gravity(mainCharacterSprite, blocks, points, velocity);
 		mainCharacterSprite.move(velocity.x, velocity.y);
-		
 		checkMainCharacterBound(mainCharacterSprite, velocity);
-		//when the right side of the character is beyond the right side of the game window,
-		//move the character back to be at the right side of the window, and stop further right movement
+		
 		if (mainCharacterSprite.getPosition().x > WidthWindow - mainCharacterSprite.getGlobalBounds().width){
 			mainCharacterSprite.setPosition(WidthWindow - mainCharacterSprite.getGlobalBounds().width, mainCharacterSprite.getPosition().y);
 			velocity.x = 0;
@@ -176,29 +164,33 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite,
 			velocity.x = 0;
 		}
 
-		stringstream convertToString;
-		convertToString << points;
-		score.setString(convertToString.str());
-		
-
 		if (mainCharacterSprite.getPosition().y > LengthWindow)
 			gameState = GAME_OVER;
 		
-
+		
 		while (window.pollEvent(event)){		
 			if (event.type == sf::Event::Closed)
 				window.close();
 		}
+		//cout <<"!!!!!Points   " <<points;
+		//***********initialize variable outside of loop for better performance ****************************
+		
+		stringstream convertToString;
+		convertToString << points;
+		score.setString(convertToString.str());
 
 		//display everything on screen
 		window.clear();
-		window.draw(score);
+		
 		window.draw(movingBackground.getBackground(0));
 		window.draw(movingBackground.getBackground(1));
 		window.draw(movingBackground.getBackground(2));
 		window.draw(mainCharacterSprite);
-		drawBlocks(window, blocks);
-		
+		//draw blocks
+		for (int k = 0; k < blocks.size(); k++)
+			window.draw(blocks[k].sprite);
+		window.draw(score);
+
 		window.display();
 	}
 }
@@ -222,7 +214,7 @@ if any blocks inside the vector block runs below the length of the window
 ***************************************************************/
 void changeBlockPosition(vector<Block> &blocks)
 {
-	cout << "\nInside changeBlockPositionBlock\n ";
+	//cout << "\nInside changeBlockPositionBlock\n ";
 
 	for (int i = 0; i < blocks.size(); ++i) {
 		//cout << "\n\nBlock #" << i << " x  position is: " << blocks[i].sprite.getPosition().x;
@@ -240,6 +232,7 @@ void changeBlockPosition(vector<Block> &blocks)
 }
 /********************************************************
 this function will influence gravity on the main character
+also, if MC overlap with blocks, user earn 1 point
 *********************************************************/
 void gravity(sf::Sprite &mainCharacterSprite, vector<Block> &blocks, 
 							int &points, sf::Vector2f &velocity)
@@ -261,7 +254,7 @@ void gravity(sf::Sprite &mainCharacterSprite, vector<Block> &blocks,
 		if (mainCharacterSprite.getPosition().y < blocks[i].sprite.getPosition().y) // groundposition
 			velocity.y += GRAVITY; // if the character is above the block, add the gravity to the y-value in velocity
 		
-		else if (velocity.y > 0 && overlap(mainCharacterSprite, blocks[i].sprite)) //if overlap with one of the blocks setposition velocity.y>0 means the mainCharacterSprite is falling
+		if (velocity.y > 0 && overlap(mainCharacterSprite, blocks[i].sprite)) //if overlap with one of the blocks setposition velocity.y>0 means the mainCharacterSprite is falling
 		{
 			//mainCharacterSprite.setPosition(mainCharacterSprite.getPosition().x, block[elem].getPosition().y);
 			mainCharacterSprite.setPosition(currPos);
@@ -278,12 +271,7 @@ void gravity(sf::Sprite &mainCharacterSprite, vector<Block> &blocks,
 			blocks[i].pointsReceived = true;
 		}
 	}		//end for loop
-}
-
-void drawBlocks(sf::RenderWindow &window, const vector<Block>& blocks)
-{
-	for (int k = 0; k < blocks.size(); k++)
-		window.draw(blocks[k].sprite);
+	//cout << "!!!!!Points   " << points;
 }
 
 /*************************************************************
@@ -362,14 +350,14 @@ void drawCredit(sf::RenderWindow &window, typeName &gameState) {
 	names.setString("Anh Pham\nYe-Eun Myung\nPhillip Nguyen\nand more");
 	names.setCharacterSize(24);
 	names.setColor(sf::Color::Black);
-	names.setPosition(100, 400);	
+	names.setPosition(100, 300);	
 
 	//ask if user want to replay
 	prompt.setFont(font);
 	prompt.setString("Press R to replay\n\nClick to Close");
 	prompt.setCharacterSize(24);
 	prompt.setColor(sf::Color::Black);
-	prompt.setPosition(100, 500);
+	prompt.setPosition(100, 450);
 
 	//Draws background first and then the texts
 	window.clear();
