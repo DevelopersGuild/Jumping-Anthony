@@ -1,4 +1,6 @@
 //Improvement: better commenting (comment prior to every line of code and function's purpose
+//if the program runs slow, maybe you are using too many unneccessary loops
+
 
 #include <SFML/Graphics.hpp>
 #include <vector>
@@ -27,7 +29,6 @@ void checkMainCharacterBound(sf::Sprite &mainCharacterSprite, sf::Vector2f &velo
 
 void moveBlocks(vector<Block> &block);
 void changeBlockPosition(vector<Block>&);
-void checkBlockCollision(vector<Block> &blocks);
 void gravity(sf::Sprite &mainCharacterSprite, vector<Block> &blocks, int &points, sf::Vector2f &velocity);
 void drawBlocks(sf::RenderWindow &, const vector<Block>& block);
 void EndScreenMode(sf::RenderWindow &, typeName& );
@@ -68,26 +69,22 @@ int main()
 	if (!blockTexture.loadFromFile(resourcePath() + "assets/block.png"))
 		std::cout << "Can't load block image to VS";
 	sf::Sprite blockSprite(blockTexture);
-	blockSprite.setScale(1, 1);
-	
+	blockSprite.setScale(sf::Vector2f(1, 0.5));
+	//set the origin of the block to be in the middle of the block
+	blockSprite.setOrigin((blockSprite.getGlobalBounds().width) / 2, (blockSprite.getGlobalBounds().height) / 2);
+
 	Block block;					//this is one block
 	block.sprite = blockSprite;
 	block.pointsReceived = false;
-	//cout <<"****The origin of block is: " <<(block.sprite.getGlobalBounds().width) / 2 << "and "<< (block.sprite.getGlobalBounds().height) / 2;		//60 and 20
 
 	vector<Block> blocks;			//vector of blocks
-	//add 1 block to the vector and set the position of each element in the vector to default
+	//add 1 block to the vector and set the position of each block in the vector equally on the screen (8 blocks and 800 window length => 1 block per 100 vertical pixel  
 	for (int i = 0; i < NUMBLOCKS; ++i) {
 		blocks.push_back(block);	//add 1 block to the vector
-		blocks[i].sprite.setTexture(blockTexture);
-		blocks[i].sprite.setPosition(rand() % 400, i * 100);		//every blocks is 100 pixel higher than the other
-		blocks[i].sprite.setScale(sf::Vector2f(1, 0.5));
-		blocks[i].sprite.setOrigin((blocks[i].sprite.getGlobalBounds().width) / 2, (blocks[i].sprite.getGlobalBounds().height) / 2);
+		blocks[i].sprite.setPosition(rand() % 400, i * (LengthWindow / NUMBLOCKS));		//every blocks is 100 pixel higher than the other		
 	}
-	//checkBlockCollision(blocks);		
 	
-		
-	
+			
 	//initialing game state to opening screen
 	gameState = OPENING;
 	int counter = 0;
@@ -159,7 +156,7 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite,
 	
 		moveBlocks(blocks);
 		changeBlockPosition(blocks);
-		//checkBlockCollision(blocks);
+		
 		
 		gravity(mainCharacterSprite, blocks, points, velocity);
 		
@@ -214,58 +211,32 @@ void moveBlocks(vector<Block> &blocks)
 {
 	int i = 0;
 	for (; i < NUMBLOCKS; ++i){
-		blocks[i].sprite.move(sf::Vector2f(0, 2.5));
+		blocks[i].sprite.move(sf::Vector2f(0, 5));
 	}
 }
 
 /***********************************************************
 				changeBlockPosition()
 if any blocks inside the vector block runs below the length of the window
-100 pixels vertically, move it back to the top of the screen 
+100 pixels vertically, move it back to the top of the screen without overlaping existing blocks 
 ***************************************************************/
 void changeBlockPosition(vector<Block> &blocks)
 {
-	
 	cout << "\nInside changeBlockPositionBlock\n ";
 
 	for (int i = 0; i < blocks.size(); ++i) {
 		//cout << "\n\nBlock #" << i << " x  position is: " << blocks[i].sprite.getPosition().x;
 		//cout << "\n\nBlock #" << i << " y  position is: " << blocks[i].sprite.getPosition().y;
-			if (blocks[i].sprite.getPosition().y > (LengthWindow - 200)) {
-				
-				blocks[i].sprite.setPosition(rand() % 400 + 1, rand() % 200);
-				//if overlap, reset position
-
+			if (blocks[i].sprite.getPosition().y > (LengthWindow)){ //- 200)) {
+				blocks[i].sprite.setPosition(rand() % 400 + 1, rand() % 100);
+				//if overlap x-position, reset position
+				if (overlap(blocks[NUMBLOCKS - 1 - i].sprite, blocks[i].sprite)) {
+					blocks[i].sprite.setPosition(rand() % 400 + 1, rand() % 100);
+				}
 				blocks[i].pointsReceived = false;
 			}
 		}
-	//checkBlockCollision(blocks);
-}
-
-/*check the vector blocks if any block elements has the same position
-if yes, re-calculate the position 
-unfinished 
-*/
-void checkBlockCollision(vector<Block> &blocks) {
-	bool shouldReCheck;
-	do {
-		shouldReCheck = false;
-		for (int i = 0; i < NUMBLOCKS; ++i) {
-			for (int j = i; j < NUMBLOCKS - 1; ++j) {
-				if (overlap(blocks[i].sprite, blocks[j].sprite)) {
-					blocks[i].sprite.setPosition(rand() % 400, rand() % (LengthWindow + i));		//every blocks is 100 pixel higher than the other
-					shouldReCheck = true;
-					cout << "Should redo\n";
-					break;
-				}
-			}
-
-			if (shouldReCheck)
-			{
-				break;
-			}
-		}
-	} while (shouldReCheck);
+	
 }
 /********************************************************
 this function will influence gravity on the main character
