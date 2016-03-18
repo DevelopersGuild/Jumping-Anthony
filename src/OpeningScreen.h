@@ -13,15 +13,13 @@ void OpeningScreen(sf::RenderWindow &window)
 	sf::Text text2;
 	sf::Texture backgroundTexture;
 	sf::Sprite background;
+	
 	if (!backgroundTexture.loadFromFile(resourcePath() + "assets/background.png"))
-	{
 		std::cout << "Error: File not found" << std::endl;
-	}
-
+	
 	if (!font.loadFromFile(resourcePath() + "assets/OpenSans-Regular.ttf"))
-	{
 		std::cout << "Error: File not found" << std::endl;
-	}
+	
 
 	//Sets the sprite as the background pic
 	background.setTexture(backgroundTexture);
@@ -36,10 +34,11 @@ void OpeningScreen(sf::RenderWindow &window)
 
 	//Quick Instruction to change to next state
 	text2.setFont(font);
-	text2.setString("Click to continue");
-	text2.setCharacterSize(12);
+	text2.setString("Click to play");
+	text2.setCharacterSize(40);
+	text1.setStyle(sf::Text::Bold);
 	text2.setColor(sf::Color::Black);
-	text2.setPosition(150, 450);	//WILL DEFINITELY HAVE TO ADJUST POSITIONING
+	text2.setPosition(80, 550);	
 
 	window.clear();
 	//Draws background first and then the texts

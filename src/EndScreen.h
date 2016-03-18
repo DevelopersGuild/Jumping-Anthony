@@ -12,7 +12,7 @@ void EndScreen(sf::RenderWindow &window)
 	sf::Text text1;
 	sf::Text text2;
 	sf::Text text3;
-	sf::Text credit; 
+	sf::Text close; 
 
 	sf::Texture backgroundTexture;
 	sf::Sprite background;
@@ -44,24 +44,17 @@ void EndScreen(sf::RenderWindow &window)
 	text2.setColor(sf::Color::Black);
 	text2.setPosition(100, 450);	//WILL DEFINITELY HAVE TO ADJUST POSITIONING
 
-	//text3.setFont(font);
-	//text3.setString("Click to Close");
-	//text3.setCharacterSize(24);
-	//text3.setColor(sf::Color::Black);
-	//text3.setPosition(100, 700);
-
 	text3.setFont(font);
 	text3.setString("Press R to replay\n\nPress C for credits");
 	text3.setCharacterSize(24);
 	text3.setColor(sf::Color::Black);
 	text3.setPosition(100, 500);
 
-	credit.setFont(font);
-	credit.setString("Click to Close");
-		
-	credit.setCharacterSize(24);
-	credit.setColor(sf::Color::Black);
-	credit.setPosition(100, 600);
+	close.setFont(font);
+	close.setString("Click to Close");
+	close.setCharacterSize(24);
+	close.setColor(sf::Color::Black);
+	close.setPosition(100, 600);
 
 	//Draws background first and then the texts
 	window.clear();
@@ -69,8 +62,7 @@ void EndScreen(sf::RenderWindow &window)
 	window.draw(text1);
 	window.draw(text2);
 	window.draw(text3);
-	window.draw(credit);
-
+	window.draw(close);
 	window.display();
 
 }
