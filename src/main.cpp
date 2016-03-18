@@ -154,10 +154,10 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite,
 		mainCharacterSprite.move(velocity.x, velocity.y);
 		checkMainCharacterBound(mainCharacterSprite, velocity);
 		
+
 		// when the main character disappears from the bottom of the screen, gameover
 		if (mainCharacterSprite.getPosition().y > LengthWindow)
 			gameState = GAME_OVER;
-		
 		while (window.pollEvent(event)){		
 			if (event.type == sf::Event::Closed)
 				window.close();
@@ -207,6 +207,7 @@ void changeBlockPosition(vector<Block> &blocks)
 	for (int i = 0; i < blocks.size(); ++i) {
 		//cout << "\n\nBlock #" << i << " x  position is: " << blocks[i].sprite.getPosition().x;
 		//cout << "\n\nBlock #" << i << " y  position is: " << blocks[i].sprite.getPosition().y;
+
 		if (blocks[i].sprite.getPosition().y > (LengthWindow)){ //- 200)) {
 			blocks[i].sprite.setPosition(rand() % 400 + 1, rand() % 100);
 			//if overlap x-position, reset position
@@ -282,7 +283,7 @@ void EndScreenMode(sf::RenderWindow &window, typeName& gameState)
 	EndScreen(window);
 	sf::Event event;
 
-	
+
 	while (window.pollEvent(event))
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
