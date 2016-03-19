@@ -237,7 +237,7 @@ also, if MC overlap with blocks, user earn 1 point
 void gravity(sf::Sprite &mainCharacterSprite, vector<Block> &blocks, 
 							int &points, sf::Vector2f &velocity)
 {
-	float moveSpeed = 30.0f, jumpSpeed = 45.0f;
+	float moveSpeed = 30.0f, jumpSpeed = 40.0f;
 	sf::Vector2f currPos = mainCharacterSprite.getPosition();
 
 	//move left and right
