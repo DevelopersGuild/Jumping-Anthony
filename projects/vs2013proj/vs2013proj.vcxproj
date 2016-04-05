@@ -84,6 +84,7 @@
     <ClCompile Include="..\..\src\ResourcePathWindows.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\CreditScreen.h" />
     <ClInclude Include="..\..\src\EndScreen.h" />
     <ClInclude Include="..\..\src\main.h" />
     <ClInclude Include="..\..\src\MovingBackground.h" />
