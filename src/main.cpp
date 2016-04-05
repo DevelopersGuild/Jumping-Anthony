@@ -4,6 +4,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <string>
 #include <ctime>
 #include <cstdlib>
 #include <sstream>
@@ -25,13 +26,12 @@ struct Block
 
 void OpeningSceneMode(sf::RenderWindow&);
 void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite,
-	vector<Block>& blocks, sf::Text score, MovingBackground &movingBackground);
+	vector<Block>& blocks, sf::Text& score, MovingBackground &movingBackground, int& points);
 void checkMainCharacterBound(sf::Sprite &mainCharacterSprite, sf::Vector2f &velocity);
-
 void moveBlocks(vector<Block> &block);
 void changeBlockPosition(vector<Block>&);
 void gravity(sf::Sprite &mainCharacterSprite, vector<Block> &blocks, int &points, sf::Vector2f &velocity);
-void EndScreenMode(sf::RenderWindow &, typeName& );
+void EndScreenMode(sf::RenderWindow &, typeName& , sf::Text& score, int& points);
 
 int main()
 {
@@ -84,9 +84,10 @@ int main()
 	stringstream displayPointsOnScreen;
 	//initialing game state to opening screen
 	gameState = OPENING;
-	
+	int points = 0;
 
 	//OPEN THE WINDOW
+
 	while (window.isOpen())
 	{
 		switch (gameState)
@@ -95,10 +96,10 @@ int main()
 			OpeningSceneMode(window);
 			break;
 		case PLAY:
-			PlayMode(window, mainCharacterSprite, blocks, score, movingBackground);
+			PlayMode(window, mainCharacterSprite, blocks, score, movingBackground, points);
 			break;
 		case GAME_OVER:
-			EndScreenMode(window, gameState);
+			EndScreenMode(window, gameState, score, points);
 			break;
 		case CREDIT:
 			drawCredit(window, gameState);
@@ -132,12 +133,11 @@ void OpeningSceneMode(sf::RenderWindow &window)
 
 //PLAY MODE EVENT HANDLE
 void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite,  
-		vector<Block>& blocks, sf::Text score, MovingBackground &movingBackground)
+		vector<Block>& blocks, sf::Text &score, MovingBackground &movingBackground, int &points)
 {
 	sf::Event event;
 	srand(time(NULL));
 	sf::Vector2f velocity(sf::Vector2f(0, 0));
-	int points = 0;
 	//reset main character position to replay game
 	mainCharacterSprite.setPosition(200.f, 200.f);
 
@@ -277,10 +277,13 @@ void checkMainCharacterBound(sf::Sprite &mainCharacterSprite, sf::Vector2f &velo
 }
 
 //draw the ending screen 
-void EndScreenMode(sf::RenderWindow &window, typeName& gameState)
+void EndScreenMode(sf::RenderWindow &window, typeName& gameState, sf::Text& score, int& points)
 {
+	for (int i = 0; i < 5; ++i)
+		cout << "********" <<points;
+
 	window.clear();
-	EndScreen(window);
+	EndScreen(window, points, score);
 	sf::Event event;
 
 
