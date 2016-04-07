@@ -85,7 +85,6 @@ int main()
 	//initialing game state to opening screen
 	gameState = OPENING;
 	int points = 0;
-
 	//OPEN THE WINDOW
 
 	while (window.isOpen())
@@ -135,6 +134,9 @@ void OpeningSceneMode(sf::RenderWindow &window)
 void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite,  
 		vector<Block>& blocks, sf::Text &score, MovingBackground &movingBackground, int &points)
 {
+	if (savedToFile)
+		savedToFile = false;
+	
 	sf::Event event;
 	srand(time(NULL));
 	sf::Vector2f velocity(sf::Vector2f(0, 0));
@@ -165,9 +167,7 @@ void PlayMode(sf::RenderWindow &window, sf::Sprite &mainCharacterSprite,
 		//cout <<"!!!!!Points   " <<points;
 		//***********initialize variable outside of loop for better performance ****************************
 		
-		stringstream convertToString;
-		convertToString << points;
-		score.setString(convertToString.str());
+		score.setString(std::to_string(points));
 
 		//display everything on screen
 		window.clear();
@@ -279,8 +279,6 @@ void checkMainCharacterBound(sf::Sprite &mainCharacterSprite, sf::Vector2f &velo
 //draw the ending screen 
 void EndScreenMode(sf::RenderWindow &window, typeName& gameState, sf::Text& score, int& points)
 {
-	for (int i = 0; i < 5; ++i)
-		cout << "********" <<points;
 
 	window.clear();
 	EndScreen(window, points, score);

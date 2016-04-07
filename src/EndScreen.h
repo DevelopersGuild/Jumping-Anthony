@@ -8,14 +8,15 @@
 #include <fstream>
 #include <cstdlib>
 
-void compareHighScore(const int& points, const sf::Text& score);
+
+void printToFile(const int& points, sf::Text& score);
 /*
 				EndScreen
 receives: window, points (user's curret points), score (high score that will be print to screen
 purpose: endscreen will print the end screen and high score
 return  : none
 */
-void EndScreen(sf::RenderWindow &window, const int &points, const sf::Text& score)
+void EndScreen(sf::RenderWindow &window, const int &points, sf::Text& score)
 {
 	sf::Font font;
 	sf::Text text1;
@@ -45,7 +46,7 @@ void EndScreen(sf::RenderWindow &window, const int &points, const sf::Text& scor
 	text1.setCharacterSize(75);
 	text1.setColor(sf::Color::Magenta);
 	text1.setStyle(sf::Text::Bold); // | sf::Text::Underlined
-	text1.setPosition(30, 200);
+	text1.setPosition(30, 50);
 
 	//Quick Instruction to change to next state
 	text2.setFont(font);
@@ -55,17 +56,26 @@ void EndScreen(sf::RenderWindow &window, const int &points, const sf::Text& scor
 	text2.setPosition(100, 450);	//WILL DEFINITELY HAVE TO ADJUST POSITIONING
 
 
-	//print high score to screen
+	//high score to screen
 	scoreText.setFont(font);
 	scoreText.setString("High Score");
-	scoreText.setCharacterSize(75);
+	scoreText.setCharacterSize(35);
 	scoreText.setColor(sf::Color::Magenta);
 	scoreText.setStyle(sf::Text::Bold); // | sf::Text::Underlined
 	sf::FloatRect textRect = scoreText.getLocalBounds();
 	scoreText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
-	scoreText.setPosition(WidthWindow / 2, 300);
+	scoreText.setPosition(WidthWindow / 2 - 50, 300);			//50 : size of score
 	
-	compareHighScore(points, score);
+	if (!savedToFile) {
+		printToFile(points, score);
+		savedToFile = true;		
+	}
+	//actual score
+	score.setColor(sf::Color::Green);
+	scoreText.setCharacterSize(35);
+	sf::FloatRect textRect2 = score.getLocalBounds();
+	score.setOrigin(textRect2.left + textRect2.width / 2.0f, textRect2.top + textRect2.height / 2.0f);
+	score.setPosition(WidthWindow *2/3 + 50 , 300);			
 	
 	//prompt user
 	text3.setFont(font);
@@ -87,37 +97,56 @@ void EndScreen(sf::RenderWindow &window, const int &points, const sf::Text& scor
 	window.draw(text2);
 	window.draw(text3);
 	window.draw(scoreText);
+	window.draw(score);			//actual high score (int)
 	window.draw(close);
 	window.display();
 
 }
 
 /*
-				compareHighScore
+				printToFile
 receives: points (current points from user, &score (highscore string that will be printed to screen
 purpose: read from inputFile (highScore.txt) and compare the user's score and inputFile's input
 		 store whichever higher score in sf::Text&score 
 		 save the higher score in inputFile
 return: nothing
 */
-void compareHighScore(const int& points, const sf::Text& score) {
+void printToFile(const int& userPoints, sf::Text& score) {
 	int higherScore = 0;
-	int inputScore = 0;			//score from input file "highScore.txt"
-	std::fstream highScoreFile("highScore.txt");
+	int inputScore = -1;			//score from input file "highScore.txt"
+	std::fstream highScoreFile("highScore.txt", std::fstream::in );			//put this in main.h
 	
 	if (!highScoreFile.is_open()) {
 		std::cout << "Error opening highScore.txt";
 		return;
 	}
-	highScoreFile >> inputScore;
-	
-	std::cout << "In compareHighScore function, input Score is: " <<inputScore <<std::endl;
-	if (points < inputScore) {
-		stringstream convertToString;
-		convertToString << inputScore;
-		score.setString(convertToString.str());
 
+	//read the integer in the last line of highScoreFile to inputScore
+	while (!highScoreFile.eof())		
+		highScoreFile >> inputScore;
+
+	/*
+	vector<int> myScores;
+	while (highScoreFile >> inputScore)
+	{
+		myScores.push_back(inputScore);		
 	}
-	//after comparison, how tf can I store higher score in highScore.txt
+	*/
+
+	//std::cout << "\nIn printToFile function, input Score is: " <<inputScore <<std::endl;
+	if (userPoints < inputScore) {	
+		score.setString(std::to_string(inputScore));
+		
+	}
+	else {
+		score.setString(std::to_string(userPoints));
+		highScoreFile.close();
+
+		highScoreFile.open("highScore.txt", std::fstream::out | std::fstream::trunc);
+		std::cout << "\n\n\nPrinting to output file" <<userPoints;
+		highScoreFile << userPoints;
+	}
+
+	highScoreFile.close();
 }
 #endif
